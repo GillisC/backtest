@@ -1,32 +1,10 @@
-use std::{io, process};
-use std::error::Error;
-
-use serde::{Deserialize, Serialize};
-use csv;
-
-#[derive(Debug, Deserialize)]
-struct Candle {
-    date: String,
-    open: f64,
-    high: f64,
-    low: f64,
-    close: f64,
-    volume: f64,
-}
-
-fn example() -> Result<(), Box<dyn Error>> {
-    let mut rdr = csv::Reader::from_reader(io::stdin());
-    for result in rdr.deserialize() {
-        let record: Candle = result?;
-        println!("{:?}", record);
-    }
-
-    Ok(())
-}
+use backtest::{Trader};
+use backtest::strategy::SMACrossover;
 
 fn main() {
-    if let Err(err) = example() {
-        println!("error running example: {err}");
-        process::exit(1)
-    }    
+    let strat = Box::new( SMACrossover::new() );
+    let mut trader = Trader::new(strat, 10_000_000.0);
+    if let Err(e) = trader.run() {
+        println!("Error occured: {e}");
+    }
 }

@@ -5,7 +5,7 @@ use crate::engine::{Portfolio};
 
 pub struct Trader {
     strategy: Box<dyn Strategy>,
-    portfolio: Portfolio,
+    pub portfolio: Portfolio,
 }
 
 impl Trader {
@@ -42,13 +42,6 @@ impl Trader {
                 }
             }
         }
-
-        // Liquidate if there is still a position
-        if self.strategy.is_in_position() {
-            let order = Order::new(OrderType::Sell, last_close_price, 10);
-            self.portfolio.update(&order);
-        }
-
         println!("Final balance: {}", self.portfolio.balance);
 
         Ok(())

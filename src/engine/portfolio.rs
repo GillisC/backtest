@@ -12,6 +12,8 @@ pub struct Portfolio {
     pub position_size: usize,
     pub avg_entry: f64,
     pub current_side: Side,
+    pub realized_pnl: f64,
+    pub trades: Vec<Order>,
 }
 
 impl Portfolio {
@@ -21,15 +23,20 @@ impl Portfolio {
             position_size: 0,
             avg_entry: 0.0,
             current_side: Side::None,
+            realized_pnl: 0.0,
+            trades: Vec::new(),
         }
     }
 
     pub fn update(&mut self, order: &Order) {
+        self.trades.push(order.clone());
+
         match &order.order_type {
             OrderType::Buy => {
                 if self.current_side == Side::Short {
                     // close out short position
                     let pnl = (self.avg_entry - order.price) * order.amount as f64;
+                    self.realized_pnl += pnl;
                     self.balance += pnl;
                     self.position_size -= order.amount;
                 }
@@ -45,9 +52,11 @@ impl Portfolio {
             OrderType::Sell => {
                 if self.current_side == Side::Long {
                     let pnl = (order.price - self.avg_entry) * order.amount as f64;
+                    self.realized_pnl += pnl;
                     self.balance += pnl;
                     self.position_size -= order.amount;
                 }
+
                 // go into short position
                 self.position_size += order.amount;
                 self.balance += order.price * order.amount as f64;

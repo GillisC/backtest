@@ -7,4 +7,5 @@ fn main() {
     if let Err(e) = trader.run() {
         println!("Error occured: {e}");
     }
+    println!("realized profil/loss: {}", trader.portfolio.realized_pnl);
 }

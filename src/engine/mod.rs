@@ -2,9 +2,11 @@ use serde::{Deserialize};
 
 pub mod trader;
 pub mod portfolio;
+pub mod report;
 
 pub use trader::Trader;
 pub use portfolio::Portfolio;
+pub use report::Report;
 
 #[derive(Debug, Deserialize)]
 pub struct Candle {
@@ -16,11 +18,13 @@ pub struct Candle {
     pub volume: f64,
 }
 
+#[derive(Clone)]
 pub enum OrderType {
     Buy,
     Sell,
 }
 
+#[derive(Clone)]
 pub struct Order {
     pub order_type: OrderType,
     pub price: f64,

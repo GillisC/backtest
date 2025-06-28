@@ -1,6 +1,7 @@
 use std::error::Error;
 use crate::strategy::Strategy;
 use crate::{OrderType, Order, Candle};
+use crate::engine::{Portfolio};
 
 pub struct Trader {
     strategy: Box<dyn Strategy>,
@@ -54,35 +55,3 @@ impl Trader {
     }
 }
 
-struct Portfolio {
-    balance: f64,
-    shares_long: usize,
-    avg_entry: f64,
-}
-
-impl Portfolio {
-    fn new(cash: f64) -> Self {
-        Self {
-            balance: cash,
-            shares_long: 0,
-            avg_entry: 0.0,
-        }
-    }
-
-    fn update(&mut self, order: &Order) {
-        match &order.order_type {
-            OrderType::Buy => {
-                self.shares_long += order.amount;
-                let cost = order.price * order.amount as f64;
-                self.balance -= cost;
-                self.avg_entry = ( self.avg_entry * self.shares_long as f64 + cost ) / self.shares_long as f64;
-            }
-            OrderType::Sell => {
-                self.shares_long -= order.amount;
-                let cash = order.price * order.amount as f64;
-                self.balance += order.price * order.amount as f64;
-                self.avg_entry = ( self.avg_entry * self.shares_long as f64 + cash) / self.shares_long as f64;
-            }
-        }
-    }
-}

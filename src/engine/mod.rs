@@ -1,8 +1,10 @@
 use serde::{Deserialize};
 
 pub mod trader;
+pub mod portfolio;
 
 pub use trader::Trader;
+pub use portfolio::Portfolio;
 
 #[derive(Debug, Deserialize)]
 pub struct Candle {

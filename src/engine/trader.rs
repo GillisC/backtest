@@ -17,17 +17,18 @@ impl Trader {
     }
     // TODO: make the csv feed an argument which the trader uses
     pub fn run(&mut self) -> Result<(), Box<dyn Error>> {
-        let mut rdr = csv::Reader::from_path("bitcoin_1h_1000.csv")
-            .expect("csv file not found");
+        let mut rdr = csv::ReaderBuilder::new()
+            .has_headers(true)
+            .from_path("bitcoin_1h_1000.csv")?;
+        // let mut rdr = csv::Reader::from_path("bitcoin_1h_1000.csv")
+        //     .expect("csv file not found");
 
-        let mut last_close_price: f64 = 0.0;
 
-        for result in rdr.deserialize() {
+        for ( index, result ) in rdr.deserialize().enumerate() {
             let record: Candle = result?;
-            last_close_price = record.close;
 
             if let Some(order) = self.strategy.on_candle(&record) {
-                self.portfolio.update(&order);
+                self.portfolio.update(&order, index);
 
                 // temp
                 match order.order_type {

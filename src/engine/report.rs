@@ -17,7 +17,7 @@ pub struct Report {
 impl Report {
     pub fn build(portfolio: &Portfolio) -> Self {
         let mut largest_win = 0.0;
-        let mut largest_loss = MAX;
+        let mut largest_loss = 0.0;
 
         let total_trades: f64 = portfolio.closed_trades.len() as f64;
         let mut total_return: f64 = 0.0;

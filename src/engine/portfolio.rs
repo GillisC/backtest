@@ -1,4 +1,5 @@
 use crate::{OrderType, Order, ClosedTrade};
+use std::collections::HashMap;
 
 #[derive(PartialEq, Eq)]
 pub enum Side {
@@ -13,7 +14,7 @@ pub struct Portfolio {
     pub avg_entry: f64,
     pub current_side: Side,
     pub realized_pnl: f64,
-    pub orders: Vec<Order>,
+    pub orders: HashMap<usize, Order>,
     pub closed_trades: Vec<ClosedTrade>,
     pub wins: usize,
 }
@@ -26,14 +27,14 @@ impl Portfolio {
             avg_entry: 0.0,
             current_side: Side::None,
             realized_pnl: 0.0,
-            orders: Vec::new(),
+            orders: HashMap::new(),
             closed_trades: Vec::new(),
             wins: 0,
         }
     }
 
-    pub fn update(&mut self, order: &Order) {
-        self.orders.push(order.clone());
+    pub fn update(&mut self, order: &Order, trade_index: usize) {
+        self.orders.insert(trade_index, order.clone());
 
         match &order.order_type {
             OrderType::Buy => {

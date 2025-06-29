@@ -1,4 +1,5 @@
 use serde::{Deserialize};
+use chrono::{ NaiveDateTime, DateTime, Utc };
 
 pub mod trader;
 pub mod portfolio;
@@ -18,7 +19,7 @@ pub struct Candle {
     pub volume: f64,
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum OrderType {
     Buy,
     Sell,

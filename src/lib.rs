@@ -3,11 +3,13 @@
 pub mod engine;
 pub mod strategy;
 pub mod indicator;
+pub mod plotter;
 
 // expose parts of modules
 pub use engine::{Order, Candle, OrderType, Trader, Report, ClosedTrade};
 pub use indicator::{SMA};
 pub use strategy::{SMACrossover};
+pub use plotter::candle_plotter;
 
 
 

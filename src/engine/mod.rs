@@ -41,3 +41,15 @@ impl Order {
     }
 }
 
+pub struct ClosedTrade {
+    pub realized_pnl: f64,
+}
+
+impl ClosedTrade {
+    pub fn new(pnl: f64) -> Self {
+        Self {
+            realized_pnl: pnl,
+        }
+    }
+}
+

@@ -1,4 +1,4 @@
-use crate::{OrderType, Order};
+use crate::{OrderType, Order, ClosedTrade};
 
 #[derive(PartialEq, Eq)]
 pub enum Side {
@@ -13,7 +13,9 @@ pub struct Portfolio {
     pub avg_entry: f64,
     pub current_side: Side,
     pub realized_pnl: f64,
-    pub trades: Vec<Order>,
+    pub orders: Vec<Order>,
+    pub closed_trades: Vec<ClosedTrade>,
+    pub wins: usize,
 }
 
 impl Portfolio {
@@ -24,18 +26,24 @@ impl Portfolio {
             avg_entry: 0.0,
             current_side: Side::None,
             realized_pnl: 0.0,
-            trades: Vec::new(),
+            orders: Vec::new(),
+            closed_trades: Vec::new(),
+            wins: 0,
         }
     }
 
     pub fn update(&mut self, order: &Order) {
-        self.trades.push(order.clone());
+        self.orders.push(order.clone());
 
         match &order.order_type {
             OrderType::Buy => {
                 if self.current_side == Side::Short {
                     // close out short position
                     let pnl = (self.avg_entry - order.price) * order.amount as f64;
+                    self.closed_trades.push(ClosedTrade::new(pnl));
+                    if pnl > 0.0 {
+                        self.wins += 1;
+                    }
                     self.realized_pnl += pnl;
                     self.balance += pnl;
                     self.position_size -= order.amount;
@@ -52,6 +60,10 @@ impl Portfolio {
             OrderType::Sell => {
                 if self.current_side == Side::Long {
                     let pnl = (order.price - self.avg_entry) * order.amount as f64;
+                    self.closed_trades.push(ClosedTrade::new(pnl));
+                    if pnl > 0.0 {
+                        self.wins += 1;
+                    }
                     self.realized_pnl += pnl;
                     self.balance += pnl;
                     self.position_size -= order.amount;

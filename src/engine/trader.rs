@@ -15,7 +15,7 @@ impl Trader {
             portfolio: Portfolio::new(starting_balance),
         }
     }
-
+    // TODO: make the csv feed an argument which the trader uses
     pub fn run(&mut self) -> Result<(), Box<dyn Error>> {
         let mut rdr = csv::Reader::from_path("bitcoin_1h_1000.csv")
             .expect("csv file not found");
@@ -28,6 +28,8 @@ impl Trader {
 
             if let Some(order) = self.strategy.on_candle(&record) {
                 self.portfolio.update(&order);
+
+                // temp
                 match order.order_type {
                     OrderType::Buy => {
                         println!(
